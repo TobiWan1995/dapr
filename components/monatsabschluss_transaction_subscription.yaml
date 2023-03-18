@@ -1,0 +1,11 @@
+apiVersion: dapr.io/v2alpha1
+kind: Subscription
+metadata:
+  name: monatsabschluss-transaction
+spec:
+  topic: mitarbeiter-monatsabschluss-topic
+  routes:
+    default: /leistungsnachweis/monatsabschluss
+  pubsubname: redis-pub-sub
+scopes:
+  - leistungsnachweis-service

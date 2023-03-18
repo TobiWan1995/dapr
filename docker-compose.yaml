@@ -1,0 +1,216 @@
+version: '3.7'
+
+networks:
+  dapr_network:
+    external: true
+
+services:
+  postgres-db:
+    image: postgres:14.2-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./dumps:/docker-entrypoint-initdb.d
+    networks:
+      - dapr_network
+
+  redis-pub-sub:
+    image: "redis:alpine"
+    hostname: redis-pub-sub
+    ports:
+      - "6379:6379"
+    networks:
+      - dapr_network
+
+  mongo-state-store:
+    image: "mongo"
+    hostname: mongo-state-store
+    ports:
+      - "27017:27017"
+    networks:
+      - dapr_network
+
+  zipkin:
+    image: openzipkin/zipkin
+    hostname: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - dapr_network
+
+  projekt-service:
+    image: projekt-service:master
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      POSTGRES_DB: postgres
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "9100:9100"
+    depends_on:
+      - redis-pub-sub
+    networks:
+      - dapr_network
+
+  projekt-service_dapr:
+    image: "daprio/dapr:1.8.0"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "projekt-service",
+        "-app-port",
+        "9100",
+        "-config",
+        "/dapr/config.yaml",
+        "-components-path",
+        "/dapr/"
+      ]
+    volumes:
+      - "./components:/dapr"
+    depends_on:
+      - projekt-service
+    network_mode: "service:projekt-service"
+
+  stammdaten-service:
+    image: stammdaten-service:master
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      POSTGRES_DB: postgres
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "9200:9200"
+    depends_on:
+      - redis-pub-sub
+    networks:
+      - dapr_network
+
+  stammdaten-service_dapr:
+    image: "daprio/dapr:1.8.0"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "stammdaten-service",
+        "-app-port",
+        "9200",
+        "-config",
+        "/dapr/config.yaml",
+        "-components-path",
+        "/dapr/"
+      ]
+    volumes:
+      - "./components:/dapr"
+    depends_on:
+      - stammdaten-service
+    network_mode: "service:stammdaten-service"
+
+  vertrag-service:
+    image: vertrag-service:master
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      POSTGRES_DB: postgres
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "9300:9300"
+    depends_on:
+      - redis-pub-sub
+    networks:
+      - dapr_network
+
+  vertrag-service_dapr:
+    image: "daprio/dapr:1.8.0"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "vertrag-service",
+        "-app-port",
+        "9300",
+        "-config",
+        "/dapr/config.yaml",
+        "-components-path",
+        "/dapr/"
+      ]
+    volumes:
+      - "./components:/dapr"
+    depends_on:
+      - vertrag-service
+    network_mode: "service:vertrag-service"
+
+  zeiterfassung-service:
+    image: zeiterfassung-service:master
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      POSTGRES_DB: postgres
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "9400:9400"
+    depends_on:
+      - redis-pub-sub
+      - mongo-state-store
+    networks:
+      - dapr_network
+
+  zeiterfassung-service_dapr:
+    image: "daprio/dapr:1.8.0"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "zeiterfassung-service",
+        "-app-port",
+        "9400",
+        "-config",
+        "/dapr/config.yaml",
+        "-components-path",
+        "/dapr/"
+      ]
+    volumes:
+      - "./components:/dapr"
+    depends_on:
+      - zeiterfassung-service
+    network_mode: "service:zeiterfassung-service"
+
+  leistungsnachweis-service:
+    image: leistungsnachweis-service:master
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      POSTGRES_DB: postgres
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "9500:9500"
+    depends_on:
+      - redis-pub-sub
+    networks:
+      - dapr_network
+
+  leistungsnachweis-service_dapr:
+    image: "daprio/dapr:1.8.0"
+    command:
+      [
+        "./daprd",
+        "-app-id",
+        "leistungsnachweis-service",
+        "-app-port",
+        "9500",
+        "-config",
+        "/dapr/config.yaml",
+        "-components-path",
+        "/dapr/"
+      ]
+    volumes:
+      - "./components:/dapr"
+    depends_on:
+      - leistungsnachweis-service
+    network_mode: "service:leistungsnachweis-service"
+
+

@@ -1,0 +1,11 @@
+apiVersion: dapr.io/v2alpha1
+kind: Subscription
+metadata:
+  name: kunde-projekt-subscription
+spec:
+  topic: kunden-projekt-topic
+  routes:
+    default: /projekt/kunde/sync
+  pubsubname: redis-pub-sub
+scopes:
+  - projekt-service

@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: mongo-state-store
+spec:
+  type: state.mongodb
+  version: v1
+  metadata:
+    - name: host
+      value: mongo-state-store:27017
+    - name: databaseName
+      value: local
+    - name: collectionName
+      value: propertyCollection
+scopes:
+  - zeiterfassung-service
