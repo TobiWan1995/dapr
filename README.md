@@ -4,7 +4,7 @@ Um die Anwendung zu starten, muss für jeden Service über Gradle eine JAR-File 
 
 docker build -t {service-name}:master .
 
-Anschließend in das Hauptverzeichniss navigieren und den Befehl folgenden Befehl ausführen:
+Anschließend in das Hauptverzeichniss navigieren und den folgenden Befehl ausführen:
 
 docker compose up -d 
 
