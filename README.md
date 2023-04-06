@@ -8,4 +8,4 @@ Anschließend in das Hauptverzeichniss navigieren und den folgenden Befehl ausf�
 
 - docker compose up -d 
 
-Hint: Database-Sequences für die meisten Entities fehlen noch und müssen ergänzt werden, wenn Entitäte hinzugefügt werden sollen.
+Hint: Database-Sequences für die Entities fehlen noch und müssen ergänzt werden, wenn Entities hinzugefügt werden sollen.
