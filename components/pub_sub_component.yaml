@@ -15,3 +15,4 @@ scopes:
   - leistungsnachweis-service
   - projekt-service
   - stammdaten-service
+  - vertrag-service
