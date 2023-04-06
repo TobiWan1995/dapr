@@ -35,3 +35,16 @@ out/
 
 ### VS Code ###
 .vscode/
+
+###
+
+/daemon/
+/gradle/
+/caches/
+/.tmp/
+/native
+/wrapper/dists/
+
+backup
+gradlew
+gradlew.bat
